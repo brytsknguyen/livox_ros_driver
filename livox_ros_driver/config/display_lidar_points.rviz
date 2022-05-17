@@ -5,9 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Grid1
         - /Livox PC1
-        - /Livox PC1/Status1
       Splitter Ratio: 0.500694990158081
     Tree Height: 462
   - Class: rviz/Selection
@@ -86,7 +84,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: livox_downlooking
+    Fixed Frame: livox_frame
     Frame Rate: 40
   Name: root
   Tools:
@@ -167,4 +165,4 @@ Window Geometry:
     collapsed: true
   Width: 1389
   X: 314
-  Y: 100
+  Y: 70

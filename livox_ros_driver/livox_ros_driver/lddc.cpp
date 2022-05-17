@@ -239,6 +239,7 @@ uint32_t Lddc::PublishPointcloud2(LidarDataQueue *queue, uint32_t packet_num,
   cloud.data.resize(cloud.row_step); /** Adjust to the real size */
   ros::Publisher *p_publisher = Lddc::GetCurrentPublisher(handle);
   if (kOutputToRos == output_type_) {
+    cloud.header.stamp = ros::Time::now();  // Use the cpu time at publish
     p_publisher->publish(cloud);
   } else {
     if (bag_ && enable_lidar_bag_) {
@@ -464,6 +465,7 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
 
   ros::Publisher *p_publisher = Lddc::GetCurrentPublisher(handle);
   if (kOutputToRos == output_type_) {
+    livox_msg.header.stamp = ros::Time::now();  // Use the cpu time at publish
     p_publisher->publish(livox_msg);
   } else {
     if (bag_ && enable_lidar_bag_) {
