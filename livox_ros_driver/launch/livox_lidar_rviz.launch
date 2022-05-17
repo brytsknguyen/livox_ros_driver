@@ -1,7 +1,7 @@
 <launch>
 
 	<arg name="lvx_file_path" default="livox_test.lvx"/>
-	<arg name="bd_list" default="100000000000000"/>
+	<arg name="bd_list" default="3GGDJA700100771"/>
 	<arg name="xfer_format" default="0"/>
 	<arg name="multi_topic" default="0"/>
 	<arg name="data_src" default="0"/>
@@ -31,7 +31,7 @@
 	      output="screen" args="$(arg cmdline_arg)"/>
 
 	<group if="$(arg rviz_enable)">
-		<node name="rviz" pkg="rviz" type="rviz" respawn="true"
+		<node name="rviz" pkg="rviz" type="rviz" respawn="false"
 				args="-d $(find livox_ros_driver)/config/display_lidar_points.rviz"/>
     </group>
 
