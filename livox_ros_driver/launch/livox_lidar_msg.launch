@@ -1,7 +1,8 @@
 <launch>
 
 	<arg name="lvx_file_path" default="livox_test.lvx"/>
-	<arg name="bd_list" default="3GGDJA700100771"/>
+	<arg name="bd_list" default="3JEDK39001Z3761"/>
+	<!-- <arg name="bd_list" default="3GGDJA700100771"/> -->
 	<arg name="xfer_format" default="1"/>
 	<arg name="multi_topic" default="0"/>
 	<arg name="data_src" default="0"/>
@@ -44,6 +45,6 @@
           		args="-a"/>
     </group>
 
-	<node pkg="tf" type="static_transform_publisher" name="livox_vizaid" args="0 0 0 0 1.57079632679 0 livox_frame livox_downlooking 1"/>
+	<node pkg="tf" type="static_transform_publisher" name="livox_vizaid" args="0 0 0 3.14159265359 1.57079632679 0 livox_frame livox_downlooking 1"/>
 
 </launch>

@@ -1,0 +1,15 @@
+<launch>
+
+	<node name="livox_viz" pkg="livox_viz"
+	      type="livox_viz" required="false"
+	      output="screen" args="42069"/>	
+
+	<node name="rviz" pkg="rviz" type="rviz" respawn="true" args="-d $(find livox_ros_driver)/config/display_lidar_points.rviz"/>
+
+	<param name="/use_sim_time" value="true" />
+	<node pkg="rosbag" type="play" name="play" output="screen" args="/home/nuc/bags/tmn__2022-06-10-15-16-55.bag"/>
+
+	<node pkg="tf2_ros" type="static_transform_publisher" name="drone_livox_view" args="0 0 0 0 0 3.14159265359 body livox_frame"/>
+	<node pkg="tf2_ros" type="static_transform_publisher" name="drone_cam_view" args="0 0 0 0 0 0 body pylon_camera"/>
+
+</launch>
