@@ -503,6 +503,7 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
   LivoxImuDataProcess(point_buf, raw_packet);
 
   LivoxImuPoint *imu = (LivoxImuPoint *)point_buf;
+  imu_data.header.stamp = ros::Time::now();
   imu_data.angular_velocity.x = imu->gyro_x;
   imu_data.angular_velocity.y = imu->gyro_y;
   imu_data.angular_velocity.z = imu->gyro_z;
