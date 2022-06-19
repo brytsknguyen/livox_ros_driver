@@ -27,7 +27,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <chrono>
-#include <cstdio>
 #include <functional>
 #include <thread>
 
@@ -140,12 +139,8 @@ void TimeSync::PollDataLoop() {
           CommPacket packet;
           memset(&packet, 0, sizeof(packet));
           while ((kParseSuccess == comm_->ParseCommStream(&packet))) {
-            if (((fn_cb_ != nullptr) || (client_data_ != nullptr))) {
-              if ((strstr((const char *)packet.data, "$GPRMC")) ||
-                      (strstr((const char *)packet.data , "$GNRMC"))){
-                fn_cb_((const char *)packet.data, packet.data_len, client_data_);
-                printf("RMC data parse success!.\n");
-              }
+            if ((fn_cb_ != nullptr) || (client_data_ != nullptr)) {
+              fn_cb_((const char *)packet.data, packet.data_len, client_data_);
             }
           }
         }
