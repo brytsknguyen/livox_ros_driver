@@ -39,6 +39,11 @@
 #include "lds_lidar.h"
 #include "lds_lvx.h"
 
+double ros_basetime = -1;
+double lvx_basetime = -1;
+double last_ros_time = -1;
+double last_lvx_time = -1;
+
 namespace livox_ros {
 
 /** Lidar Data Distribute Control--------------------------------------------*/
@@ -463,9 +468,38 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
     ++published_packet;
   }
 
+  // Skip 10 messages to regularize the rate
+  static int skip = 10;
+  if (skip > 0)
+  {
+    skip--;
+    return published_packet;
+  }  
+
   ros::Publisher *p_publisher = Lddc::GetCurrentPublisher(handle);
-  if (kOutputToRos == output_type_) {
-    livox_msg.header.stamp = ros::Time::now();  // Use the cpu time at publish
+  if (kOutputToRos == output_type_)
+  {
+    double ros_time = ros::Time::now().toSec();
+    double lvx_time = livox_msg.header.stamp.toSec();
+
+    if (ros_basetime == -1 || lvx_basetime == -1)
+    {
+      ros_basetime = ros_time - livox_msg.points.back().offset_time / 1.0e9;
+      lvx_basetime = lvx_time;
+    }
+
+    double stamp_byros = ros_time - livox_msg.points.back().offset_time / 1.0e9;
+    double stamp_bylvx = ros_basetime + (lvx_time - lvx_basetime);
+
+    // If stamp byros deviates too much by livox, reset the offsets
+    if( fabs(stamp_byros - stamp_bylvx) > 0.020 )
+    {
+      ros_basetime = stamp_byros;
+      lvx_basetime = lvx_time;
+    }
+
+    livox_msg.header.stamp = ros::Time(ros_basetime + (lvx_time - lvx_basetime));
+
     p_publisher->publish(livox_msg);
   } else {
     if (bag_ && enable_lidar_bag_) {
@@ -503,7 +537,9 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
   LivoxImuDataProcess(point_buf, raw_packet);
 
   LivoxImuPoint *imu = (LivoxImuPoint *)point_buf;
-  imu_data.header.stamp = ros::Time::now();
+
+  double lvx_time = imu_data.header.stamp.toSec();
+  imu_data.header.stamp = ros::Time(ros_basetime + (lvx_time - lvx_basetime));
   imu_data.angular_velocity.x = imu->gyro_x;
   imu_data.angular_velocity.y = imu->gyro_y;
   imu_data.angular_velocity.z = imu->gyro_z;
