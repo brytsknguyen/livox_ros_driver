@@ -538,14 +538,16 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
 
   LivoxImuPoint *imu = (LivoxImuPoint *)point_buf;
 
+  static double gravity = 9.80665;
+
   double lvx_time = imu_data.header.stamp.toSec();
   imu_data.header.stamp = ros::Time(ros_basetime + (lvx_time - lvx_basetime));
   imu_data.angular_velocity.x = imu->gyro_x;
   imu_data.angular_velocity.y = imu->gyro_y;
   imu_data.angular_velocity.z = imu->gyro_z;
-  imu_data.linear_acceleration.x = imu->acc_x;
-  imu_data.linear_acceleration.y = imu->acc_y;
-  imu_data.linear_acceleration.z = imu->acc_z;
+  imu_data.linear_acceleration.x = imu->acc_x*gravity;
+  imu_data.linear_acceleration.y = imu->acc_y*gravity;
+  imu_data.linear_acceleration.z = imu->acc_z*gravity;
 
   QueuePopUpdate(queue);
   ++published_packet;
